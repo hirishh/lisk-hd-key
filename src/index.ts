@@ -1,4 +1,5 @@
 import { getPublicKey as getPubKey } from 'ed25519-hd-key';
+import { BaseTransaction } from '@liskhq/lisk-transactions';
 import { derivePath } from './utils';
 import { prepareTransaction } from './sign';
 
@@ -7,12 +8,12 @@ export const getPublicKey = (path: string, seed: string) => {
     return getPubKey(key, false);
 };
 
-export const signTransaction = (seed: string, path: string, transaction) => {
+export const signTransaction = (seed: string, path: string, transaction: BaseTransaction): BaseTransaction => {
     const { key: privateKey } = derivePath(path, seed);
     const publicKey = getPubKey(privateKey, false);
 
-    if (!transaction.senderPublicKey) {
-        transaction.senderPublicKey = publicKey.toString('hex');
+    if (!transaction['_senderPublicKey']) {
+        transaction['_senderPublicKey'] = publicKey.toString('hex')
     }
 
     // ed25519 sk is 32 bytes long.
